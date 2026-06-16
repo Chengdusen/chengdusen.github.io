@@ -1,0 +1,80 @@
+{
+  "site": {
+    "name": "DSShed",
+    "tagline": "Digital Storage Shed — 我的个人工具箱与文档库",
+    "owner": "Chengdusen"
+  },
+  "categories": [
+    {
+      "id": "installers",
+      "name": "安装包",
+      "icon": "📦",
+      "description": "常用软件与开发工具安装包"
+    },
+    {
+      "id": "documents",
+      "name": "文档资料",
+      "icon": "📄",
+      "description": "技术文档、手册与参考资料"
+    },
+    {
+      "id": "tools",
+      "name": "在线工具",
+      "icon": "🔧",
+      "description": "实用小工具与脚本"
+    },
+    {
+      "id": "resources",
+      "name": "资源合集",
+      "icon": "📁",
+      "description": "模板、素材与其他资源"
+    }
+  ],
+  "items": [
+    {
+      "id": "example-installer",
+      "categoryId": "installers",
+      "name": "Node.js LTS",
+      "description": "Node.js 长期支持版本安装包，适用于前后端开发",
+      "icon": "🟢",
+      "version": "20.x",
+      "size": "32 MB",
+      "downloadUrl": "#",
+      "releaseUrl": "#",
+      "tags": ["开发工具", "运行环境", "JavaScript"],
+      "lastUpdated": "2025-06-01",
+      "platform": ["windows", "mac", "linux"],
+      "license": "MIT"
+    },
+    {
+      "id": "example-doc",
+      "categoryId": "documents",
+      "name": "Git 常用命令速查表",
+      "description": "日常开发中常用的 Git 命令参考，PDF 格式",
+      "icon": "📋",
+      "fileUrl": "#",
+      "tags": ["Git", "版本控制", "速查表"],
+      "lastUpdated": "2025-05-15"
+    },
+    {
+      "id": "example-tool",
+      "categoryId": "tools",
+      "name": "JSON 格式化校验器",
+      "description": "在线 JSON 格式化、美化和语法校验工具",
+      "icon": "✨",
+      "toolUrl": "#",
+      "tags": ["JSON", "工具", "在线"],
+      "lastUpdated": "2025-06-10"
+    },
+    {
+      "id": "example-resource",
+      "categoryId": "resources",
+      "name": "前端项目模板",
+      "description": "包含 Vite + TypeScript + ESLint 的标准前端项目模板",
+      "icon": "🏗️",
+      "downloadUrl": "#",
+      "tags": ["模板", "前端", "Vite"],
+      "lastUpdated": "2025-06-01"
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>DSShed Admin — 在线管理</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- ===== Login Screen ===== -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-card__icon">🔐</div>
+    <h1 class="login-card__title">DSShed Admin</h1>
+    <p class="login-card__desc">在线管理面板 — 通过 GitHub API 管理你的工具箱</p>
+
+    <div class="form-group">
+      <label class="form-label">GitHub Personal Access Token</label>
+      <input type="password" id="login-token" class="form-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      <div class="form-hint">
+        需要 <code>repo</code> 权限。
+        <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">创建 Token →</a>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">仓库路径</label>
+      <input type="text" id="login-repo" class="form-input" placeholder="chengdusen/chengdusen.github.io" value="chengdusen/chengdusen.github.io">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">管理密码</label>
+      <input type="password" id="login-password" class="form-input" placeholder="输入管理密码">
+    </div>
+
+    <button class="btn btn-primary" onclick="handleLogin()" style="width:100%;">🔓 登录</button>
+    <div id="login-error" class="login-error"></div>
+
+    <hr style="border-color:var(--border);margin:20px 0;">
+
+    <details>
+      <summary style="color:var(--text-muted);cursor:pointer;font-size:0.85rem;">ℹ️ 首次使用说明</summary>
+      <div style="color:var(--text-secondary);font-size:0.82rem;margin-top:8px;line-height:1.8;">
+        <p><strong>1. 创建 GitHub Token：</strong></p>
+        <p>访问 GitHub Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token。</p>
+        <p>勾选 <code>repo</code> 权限，生成后复制 token。</p>
+        <p><strong>2. 设置密码：</strong></p>
+        <p>首次使用时，输入你想设置的密码。密码的哈希值会存储在浏览器中。</p>
+        <p><strong>3. 数据安全：</strong></p>
+        <p>Token 和密码都存储在浏览器 localStorage 中，不会上传到任何服务器。</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ===== Admin Interface ===== -->
+<div id="admin-screen" class="admin-screen" style="display:none;">
+  <header class="admin-header">
+    <div class="admin-header__title">
+      🧰 <span>DSShed Admin</span>
+    </div>
+    <div class="admin-header__actions">
+      <span id="sync-status">🟢 已同步</span>
+      <button class="btn btn-outline btn-sm" onclick="syncFromGitHub()">🔄 同步</button>
+      <button class="btn btn-outline btn-sm" onclick="handleLogout()">🚪 退出</button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-nav__item active" data-panel="items" onclick="switchPanel('items')">
+          📦 工具项 <span class="sidebar-nav__badge" id="items-badge">0</span>
+        </button>
+        <button class="sidebar-nav__item" data-panel="categories" onclick="switchPanel('categories')">
+          📂 分类 <span class="sidebar-nav__badge" id="cats-badge">0</span>
+        </button>
+        <button class="sidebar-nav__item" data-panel="settings" onclick="switchPanel('settings')">
+          ⚙️ 站点设置
+        </button>
+        <button class="sidebar-nav__item" data-panel="logs" onclick="switchPanel('logs')">
+          📜 操作日志
+        </button>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+
+      <!-- Items Panel -->
+      <section class="panel active" id="panel-items">
+        <div class="panel__header">
+          <h2 class="panel__title">📦 工具项管理</h2>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-danger btn-sm" onclick="deleteItem()" id="btn-delete" disabled>🗑 删除</button>
+            <button class="btn btn-primary btn-sm" onclick="addItem()">＋ 新增工具</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div>
+            <input type="text" class="form-input" id="items-filter" placeholder="🔍 筛选工具项..." oninput="refreshItemsList()" style="margin-bottom:12px;">
+            <div class="items-list" id="items-list"></div>
+          </div>
+          <div>
+            <h3 style="margin-bottom:16px;color:var(--text-secondary);" id="form-title">➕ 新增工具项</h3>
+            <form id="item-form" onsubmit="saveItem(event)">
+              <input type="hidden" id="item-id" value="">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">图标 *</label>
+                  <input type="text" class="form-input" id="item-icon" placeholder="🟢" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">名称 *</label>
+                  <input type="text" class="form-input" id="item-name" placeholder="工具名称" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">描述 *</label>
+                <textarea class="form-textarea" id="item-desc" placeholder="描述..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">分类 *</label>
+                <select class="form-select" id="item-category"></select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">版本</label>
+                  <input type="text" class="form-input" id="item-version" placeholder="20.x">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">大小</label>
+                  <input type="text" class="form-input" id="item-size" placeholder="32 MB">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">存储方式</label>
+                <select class="form-select" id="item-storage">
+                  <option value="local">本地文件</option>
+                  <option value="release">GitHub Releases</option>
+                  <option value="external">外部链接</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">下载链接</label>
+                <input type="text" class="form-input" id="item-download" placeholder="URL 或文件路径">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Releases / 文档链接</label>
+                <input type="text" class="form-input" id="item-release" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tags</label>
+                <div class="tags-input-wrapper" id="tags-wrapper">
+                  <input type="text" class="tags-input" id="tags-input" placeholder="输入标签后按回车...">
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button type="submit" class="btn btn-primary" id="btn-save">💾 保存到 GitHub</button>
+                <button type="button" class="btn btn-outline" onclick="resetForm()">↩ 重置</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Categories Panel -->
+      <section class="panel" id="panel-categories">
+        <div class="panel__header">
+          <h2 class="panel__title">📂 分类管理</h2>
+          <button class="btn btn-primary btn-sm" onclick="addCategory()">＋ 新增分类</button>
+        </div>
+        <div class="category-list" id="category-list"></div>
+      </section>
+
+      <!-- Settings Panel -->
+      <section class="panel" id="panel-settings">
+        <div class="panel__header">
+          <h2 class="panel__title">⚙️ 站点设置</h2>
+        </div>
+        <div style="max-width:500px;">
+          <div class="form-group">
+            <label class="form-label">站点名称</label>
+            <input type="text" class="form-input" id="site-name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">站点标语</label>
+            <input type="text" class="form-input" id="site-tagline">
+          </div>
+          <div class="form-group">
+            <label class="form-label">站长</label>
+            <input type="text" class="form-input" id="site-owner">
+          </div>
+          <button class="btn btn-primary" onclick="saveSiteSettings()">💾 保存设置</button>
+        </div>
+      </section>
+
+      <!-- Logs Panel -->
+      <section class="panel" id="panel-logs">
+        <div class="panel__header">
+          <h2 class="panel__title">📜 操作日志</h2>
+          <button class="btn btn-outline btn-sm" onclick="clearLogs()">清空日志</button>
+        </div>
+        <div id="logs-container"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-container" class="toast-container"></div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Admin tool temp files
+admin-local-export.json
+
+# Node (if used for local server)
+node_modules/
+package-lock.json

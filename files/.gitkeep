@@ -1,0 +1,4 @@
+# 将需要下载的文件（安装包、文档等）放在此目录下
+# 然后在 data.json 中通过 "files/文件名.扩展名" 引用
+# Place downloadable files (installers, documents, etc.) in this directory
+# Then reference them in data.json via "files/filename.ext"

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>404 — DSShed</title>
+  <style>
+    :root {
+      --bg-primary: #0f0f13;
+      --bg-card: #1e1e2e;
+      --text-primary: #e8e8f0;
+      --text-secondary: #9090a8;
+      --accent: #7c6ff7;
+      --accent-hover: #9588ff;
+      --accent-secondary: #00c9a7;
+      --border: #2a2a3e;
+      --radius: 16px;
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .error-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px;
+      max-width: 480px;
+      width: 100%;
+      animation: fade-in 0.5s ease-out;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .error-card__icon {
+      font-size: 72px;
+      margin-bottom: 16px;
+    }
+
+    .error-card__code {
+      font-size: 5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .error-card__title {
+      font-size: 1.3rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .error-card__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    .error-card__btn:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 16px rgba(124, 111, 247, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="error-card">
+    <div class="error-card__icon">🔮</div>
+    <div class="error-card__code">404</div>
+    <div class="error-card__title">这个工具掉进异次元了…</div>
+    <a href="/" class="error-card__btn">🏠 回到工具箱</a>
+  </div>
+</body>
+</html>
